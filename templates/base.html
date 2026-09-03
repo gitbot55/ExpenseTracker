@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <script>
+        (function () {
+            var saved = localStorage.getItem("theme");
+            if (saved === "dark") {
+                document.documentElement.setAttribute("data-theme", "dark");
+            }
+        })();
+    </script>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}Expense Tracker{% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}?v=4"
+    >
+
+</head>
+
+<body>
+
+    <div class="interactive-background">
+
+        <div
+            class="background-glow"
+            id="bgGlow"
+        ></div>
+
+        <canvas id="particleCanvas"></canvas>
+
+    </div>
+
+
+    <div class="app-container">
+
+        <aside class="sidebar">
+
+            <div class="sidebar-brand">
+
+                <div class="brand-icon">
+                    ₹
+                </div>
+
+                <div>
+
+                    <h2>
+                        ExpensePilot
+                    </h2>
+
+                    <span>
+                        Personal Finance
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <nav class="sidebar-nav">
+
+                <a
+                    href="{{ url_for('index') }}"
+                    class="{% if request.endpoint == 'index' %}active{% endif %}"
+                >
+
+                    <span class="nav-icon">
+                        ◉
+                    </span>
+
+                    <span>
+                        Dashboard
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="{{ url_for('add') }}"
+                    class="{% if request.endpoint == 'add' %}active{% endif %}"
+                >
+
+                    <span class="nav-icon">
+                        +
+                    </span>
+
+                    <span>
+                        Add Transaction
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="{{ url_for('history') }}"
+                    class="{% if request.endpoint == 'history' %}active{% endif %}"
+                >
+
+                    <span class="nav-icon">
+                        ≡
+                    </span>
+
+                    <span>
+                        Transaction History
+                    </span>
+
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-footer">
+
+                <button
+                    id="themeToggle"
+                    class="theme-toggle"
+                    type="button"
+                    aria-label="Switch to dark background"
+                >
+                    ☾
+                </button>
+
+
+                <span>
+                    ExpensePilot
+                </span>
+
+                <small>
+                    Personal Finance Manager
+                </small>
+
+            </div>
+
+        </aside>
+
+
+        <main class="main-content">
+
+            {% block content %}
+            {% endblock %}
+
+        </main>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/interactive-background.js') }}?v=4"></script>
+    <script src="{{ url_for('static', filename='js/theme-toggle.js') }}?v=4"></script>
+
+</body>
+
+</html> 
