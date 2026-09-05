@@ -1,0 +1,509 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+Expense Tracker
+{% endblock %}
+
+
+{% block content %}
+
+<!-- =====================================================
+     DASHBOARD HEADER
+===================================================== -->
+
+<div class="dashboard-header">
+
+    <div class="dashboard-heading">
+
+        <span class="dashboard-eyebrow">
+            PERSONAL FINANCE
+        </span>
+
+        <h1>
+            Dashboard
+        </h1>
+
+        <p>
+            Here's an overview of your finances.
+        </p>
+
+    </div>
+
+
+    <a
+        href="{{ url_for('add') }}"
+        class="add-button"
+    >
+        <span>＋</span>
+        Add Transaction
+    </a>
+
+</div>
+
+
+<!-- =====================================================
+     FINANCIAL CARDS
+===================================================== -->
+
+<div class="cards">
+
+    <!-- INCOME -->
+
+    <div class="card income-card">
+
+        <div class="card-top">
+
+            <div class="card-icon">
+                ↗
+            </div>
+
+            <span class="card-label">
+                TOTAL INCOME
+            </span>
+
+        </div>
+
+        <p>
+            ₹ {{ "%.2f"|format(income|default(0)) }}
+        </p>
+
+        <span class="card-description">
+            Money received
+        </span>
+
+    </div>
+
+
+    <!-- EXPENSE -->
+
+    <div class="card expense-card">
+
+        <div class="card-top">
+
+            <div class="card-icon">
+                ↘
+            </div>
+
+            <span class="card-label">
+                TOTAL EXPENSE
+            </span>
+
+        </div>
+
+        <p>
+            ₹ {{ "%.2f"|format(expense|default(0)) }}
+        </p>
+
+        <span class="card-description">
+            Money spent
+        </span>
+
+    </div>
+
+
+    <!-- BALANCE -->
+
+    <div class="card balance-card">
+
+        <div class="card-top">
+
+            <div class="card-icon">
+                ₹
+            </div>
+
+            <span class="card-label">
+                CURRENT BALANCE
+            </span>
+
+        </div>
+
+        <p>
+            ₹ {{ "%.2f"|format(balance|default(0)) }}
+        </p>
+
+        <span class="card-description">
+            Income minus expenses
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     DASHBOARD TWO-COLUMN AREA
+===================================================== -->
+
+<div class="dashboard-grid">
+
+
+    <!-- =================================================
+         EXPENSE BREAKDOWN
+    ================================================== -->
+
+    <section class="chart-section">
+
+        <div class="section-title">
+
+            <div>
+
+                <span class="section-eyebrow">
+                    SPENDING
+                </span>
+
+                <h2>
+                    Expense Breakdown
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        {% if category_data %}
+
+            <div class="chart-container">
+
+                <canvas id="expenseChart"></canvas>
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-chart">
+
+                <div class="empty-chart-icon">
+                    ◯
+                </div>
+
+                <p>
+                    No expense data available yet.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- =================================================
+         TOP CATEGORIES
+    ================================================== -->
+
+    <section class="summary-section">
+
+        <div class="section-title">
+
+            <div>
+
+                <span class="section-eyebrow">
+                    BREAKDOWN
+                </span>
+
+                <h2>
+                    Top Categories
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        {% if category_data %}
+
+            <div class="category-bars">
+
+                {% for item in category_data[:5] %}
+
+                <div class="category-bar-row">
+
+                    <div class="category-bar-label">
+
+                        <span>{{ item["category"] }}</span>
+
+                        <span>
+                            ₹ {{ "%.2f"|format(item["total"]|default(0)) }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="category-bar-track">
+
+                        <div
+                            class="category-bar-fill"
+                            style="width: {{ (
+                                (item['total'] / expense * 100)
+                                if expense else 0
+                            )|round(1) }}%;"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-chart">
+
+                <div class="empty-chart-icon">
+                    ◯
+                </div>
+
+                <p>
+                    No spending categories yet.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+
+<!-- =====================================================
+     RECENT TRANSACTIONS
+===================================================== -->
+
+<section class="recent-section">
+
+
+    <div class="section-header">
+
+        <div>
+
+            <span class="section-eyebrow">
+                ACTIVITY
+            </span>
+
+            <h2>
+                Recent Transactions
+            </h2>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('history') }}"
+            class="view-all"
+        >
+            View All →
+        </a>
+
+    </div>
+
+
+    {% if transactions %}
+
+        <div class="transaction-list">
+
+            {% for transaction in transactions %}
+
+            <div class="transaction-row">
+
+                <div class="transaction-avatar">
+                    {{ transaction["category"]|first|upper }}
+                </div>
+
+
+                <div class="transaction-main">
+
+                    <strong class="transaction-title">
+                        {{ transaction["title"] }}
+                    </strong>
+
+                    <span class="category-text">
+                        {{ transaction["category"] }}
+                        ·
+                        {{ transaction["date"]|format_date }}
+                    </span>
+
+                </div>
+
+
+                <div class="transaction-side">
+
+                    <span class="transaction-amount">
+                        ₹ {{ "%.2f"|format(
+                            transaction["amount"]
+                        ) }}
+                    </span>
+
+                    {% if transaction["type"] == "Income" %}
+
+                        <span class="income-badge">
+                            Income
+                        </span>
+
+                    {% else %}
+
+                        <span class="expense-badge">
+                            Expense
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                ⇄
+            </div>
+
+            <h2>
+                No transactions yet
+            </h2>
+
+            <p>
+                Add your first transaction to start tracking your finances.
+            </p>
+
+            <a
+                href="{{ url_for('add') }}"
+                class="add-button"
+            >
+                ＋ Add Transaction
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- =====================================================
+     CHART.JS
+===================================================== -->
+
+{% if category_data %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+    const categories = [
+
+        {% for item in category_data %}
+
+            {{ item["category"]|tojson }}
+
+            {% if not loop.last %}
+                ,
+            {% endif %}
+
+        {% endfor %}
+
+    ];
+
+
+    const amounts = [
+
+        {% for item in category_data %}
+
+            {{ item["total"]|default(0) }}
+
+            {% if not loop.last %}
+                ,
+            {% endif %}
+
+        {% endfor %}
+
+    ];
+
+
+    const chartElement =
+        document.getElementById("expenseChart");
+
+
+    if (chartElement) {
+
+        new Chart(
+
+            chartElement,
+
+            {
+
+                type: "doughnut",
+
+                data: {
+
+                    labels: categories,
+
+                    datasets: [
+
+                        {
+
+                            label: "Expenses",
+
+                            data: amounts,
+
+                            borderWidth: 0
+
+                        }
+
+                    ]
+
+                },
+
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    cutout: "68%",
+
+                    plugins: {
+
+                        legend: {
+
+                            position: "bottom",
+
+                            labels: {
+
+                                padding: 18,
+
+                                usePointStyle: true,
+
+                                pointStyle: "circle"
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+    }
+
+</script>
+
+{% endif %}
+
+
+{% endblock %}
+

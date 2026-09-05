@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <script>
+        (function () {
+            var saved = localStorage.getItem("theme");
+            if (saved === "dark") {
+                document.documentElement.setAttribute("data-theme", "dark");
+            }
+        })();
+    </script>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Expense Tracker
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}?v=5"
+    >
+
+</head>
+
+<body>
+
+    <div class="interactive-background">
+
+        <div
+            class="background-glow"
+            id="bgGlow"
+        ></div>
+
+        <canvas id="particleCanvas"></canvas>
+
+    </div>
+
+
+    <button
+        id="themeToggle"
+        class="theme-toggle auth-theme-toggle"
+        type="button"
+        aria-label="Switch to dark background"
+    >
+        ☾
+    </button>
+
+
+    <div class="auth-wrapper">
+
+        <div class="auth-card">
+
+            <div class="auth-brand">
+
+                <div class="brand-icon">
+                    ₹
+                </div>
+
+                <h2>
+                    ExpensePilot
+                </h2>
+
+            </div>
+
+
+            <p class="auth-subtitle">
+                Create your account
+            </p>
+
+
+            {% if error %}
+
+                <div class="auth-error">
+                    {{ error }}
+                </div>
+
+            {% endif %}
+
+
+            <form method="POST">
+
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="form-group">
+
+                    <label for="username">
+                        Username
+                    </label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        autocomplete="username"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="confirm_password">
+                        Confirm Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="confirm_password"
+                        name="confirm_password"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="submit-button auth-submit"
+                >
+                    Sign Up
+                </button>
+
+            </form>
+
+
+            <p class="auth-switch">
+                Already have an account?
+                <a href="{{ url_for('login') }}">Log in</a>
+            </p>
+
+        </div>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/interactive-background.js') }}?v=5"></script>
+    <script src="{{ url_for('static', filename='js/theme-toggle.js') }}?v=5"></script>
+
+</body>
+
+</html>

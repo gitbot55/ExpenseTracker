@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+
+{% block title %}
+Expense Tracker
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <span class="section-eyebrow">
+            TRANSACTION
+        </span>
+
+        <h1>
+            Edit Transaction
+        </h1>
+
+        <p>
+            Update the details of this transaction.
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="form-card">
+
+    <form
+        method="POST"
+        class="transaction-form"
+    >
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <!-- TITLE -->
+
+        <div class="form-group">
+
+            <label for="title">
+                Transaction Title
+            </label>
+
+            <input
+                type="text"
+                id="title"
+                name="title"
+                value="{{ transaction['title'] }}"
+                placeholder="e.g. Grocery, Salary, Movie"
+                required
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <!-- AMOUNT -->
+
+        <div class="form-group">
+
+            <label for="amount">
+                Amount
+            </label>
+
+            <div class="amount-input">
+
+                <span class="currency-symbol">
+                    ₹
+                </span>
+
+                <input
+                    type="number"
+                    id="amount"
+                    name="amount"
+                    value="{{ transaction['amount'] }}"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- CATEGORY -->
+
+        <div class="form-group">
+
+            <label for="category">
+                Category
+            </label>
+
+            {% set current_category = transaction['category'] %}
+
+            <select
+                id="category"
+                name="category"
+                required
+            >
+
+                <option value="Food"
+                    {% if current_category == "Food" %}selected{% endif %}>
+                    Food
+                </option>
+
+                <option value="Groceries"
+                    {% if current_category == "Groceries" %}selected{% endif %}>
+                    Groceries
+                </option>
+
+                <option value="Transport"
+                    {% if current_category == "Transport" %}selected{% endif %}>
+                    Transport
+                </option>
+
+                <option value="Travel"
+                    {% if current_category == "Travel" %}selected{% endif %}>
+                    Travel
+                </option>
+
+                <option value="Shopping"
+                    {% if current_category == "Shopping" %}selected{% endif %}>
+                    Shopping
+                </option>
+
+                <option value="Entertainment"
+                    {% if current_category == "Entertainment" %}selected{% endif %}>
+                    Entertainment
+                </option>
+
+                <option value="Bills"
+                    {% if current_category == "Bills" %}selected{% endif %}>
+                    Bills
+                </option>
+
+                <option value="Health"
+                    {% if current_category == "Health" %}selected{% endif %}>
+                    Health
+                </option>
+
+                <option value="Education"
+                    {% if current_category == "Education" %}selected{% endif %}>
+                    Education
+                </option>
+
+                <option value="Business"
+                    {% if current_category == "Business" %}selected{% endif %}>
+                    Business
+                </option>
+
+                <option value="Freelance"
+                    {% if current_category == "Freelance" %}selected{% endif %}>
+                    Freelance
+                </option>
+
+                <option value="Investment"
+                    {% if current_category == "Investment" %}selected{% endif %}>
+                    Investment
+                </option>
+
+                <option value="Salary"
+                    {% if current_category == "Salary" %}selected{% endif %}>
+                    Salary
+                </option>
+
+                <option value="Gift"
+                    {% if current_category == "Gift" %}selected{% endif %}>
+                    Gift
+                </option>
+
+                <option value="Other"
+                    {% if current_category == "Other" %}selected{% endif %}>
+                    Other
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- DATE -->
+
+        <div class="form-group">
+
+            <label for="date">
+                Date
+            </label>
+
+            <input
+                type="date"
+                id="date"
+                name="date"
+                value="{{ transaction['date'] }}"
+                required
+            >
+
+        </div>
+
+
+        <!-- TRANSACTION TYPE -->
+
+        <div class="form-group full-width">
+
+            <label>
+                Transaction Type
+            </label>
+
+
+            <div class="transaction-type">
+
+
+                <!-- EXPENSE -->
+
+                <label class="type-option">
+
+                    <input
+                        type="radio"
+                        name="type"
+                        value="Expense"
+                        {% if transaction['type'] == 'Expense' %}
+                            checked
+                        {% endif %}
+                    >
+
+                    <span class="type-arrow">
+                        →
+                    </span>
+
+                    <span class="type-label">
+                        Expense
+                    </span>
+
+                </label>
+
+
+                <!-- INCOME -->
+
+                <label class="type-option">
+
+                    <input
+                        type="radio"
+                        name="type"
+                        value="Income"
+                        {% if transaction['type'] == 'Income' %}
+                            checked
+                        {% endif %}
+                    >
+
+                    <span class="type-arrow">
+                        →
+                    </span>
+
+                    <span class="type-label">
+                        Income
+                    </span>
+
+                </label>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="form-actions">
+
+            <a
+                href="{{ url_for('history') }}"
+                class="cancel-button"
+            >
+                Cancel
+            </a>
+
+            <button
+                type="submit"
+                class="submit-button"
+            >
+                Save Changes
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}
